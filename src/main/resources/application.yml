@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: ongame-gestionale
+
+  datasource:
+    # Supabase > Project Settings > Database > Connection string (Session pooler)
+    #SUPABASE_DB_HOST
+    url: jdbc:postgresql://aws-0-eu-west-1.pooler.supabase.com:5432/postgres?user=postgres.ldxfyvaxyjsavjhbcxfp&password=MEn8or0Z35,/
+    username: ${SUPABASE_DB_USER::postgres}          # con il pooler: postgres.<project-ref>
+    password: ${SUPABASE_DB_PASSWORD::postgres}
+    hikari:
+      maximum-pool-size: 5
+
+  jpa:
+    hibernate:
+      ddl-auto: validate                   # lo schema lo gestisce Flyway
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc.time_zone: Europe/Rome
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  #security:
+  #  oauth2:
+  #    resourceserver:
+  #      jwt:
+  #        issuer-uri: https://${SUPABASE_PROJECT_REF}.supabase.co/auth/v1
+  #        jwk-set-uri: https://${SUPABASE_PROJECT_REF}.supabase.co/auth/v1/.well-known/jwks.json
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    persist-authorization: true
+  api-docs:
+    path: /v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+app:
+  scheduler:
+    compleanni-cron: "0 0 9 * * *"         # ogni giorno alle 09:00
+    timezone: Europe/Rome
+    #SUPABASE_PROJECT_REF = ldxfyvaxyjsavjhbcxfp
+  supabase:
+    url: https://ldxfyvaxyjsavjhbcxfp.supabase.co
+    #SUPABASE_ANON_KEY
+    anon-key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxkeGZ5dmF4eWpzYXZqaGJjeGZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1NTI1NzAsImV4cCI6MjEwNzEyODU3MH0.qxc4JMRP3dWsDmc3wruZWqo16x2odmZfBnmVgzo61ok
+    #SUPABASE_SERVICE_ROLE_KEY
+    service-role-key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxkeGZ5dmF4eWpzYXZqaGJjeGZwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MTU1MjU3MCwiZXhwIjoyMTA3MTI4NTcwfQ.C9E1ZcufLPqAiobWBx11WZPeAdE-3nhd2YVRqjfeK4c   # SOLO backend
+#  security:
+#    pii-encryption-key: ${PII_ENCRYPTION_KEY}        # 32 byte in base64
+#  whatsapp:
+#    api-url: https://graph.facebook.com/v21.0
+#    phone-number-id: ${WHATSAPP_PHONE_NUMBER_ID:}
+#    token: ${WHATSAPP_TOKEN:}
+#    template-compleanno: buon_compleanno
