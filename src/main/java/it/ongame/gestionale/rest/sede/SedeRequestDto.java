@@ -15,7 +15,7 @@ import java.util.UUID;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SedeRequestDto extends OnGameCommonRequestDto {
-    @NotBlank @Size(max = 20) String codice;
+    //@NotBlank @Size(max = 20) String codice;
     @NotBlank @Size(max = 150) String nome;
     String indirizzo;
     String citta;

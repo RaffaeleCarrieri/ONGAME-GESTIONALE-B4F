@@ -2,14 +2,17 @@ package it.ongame.gestionale.rest.utente.service.impl;
 
 import it.ongame.gestionale.common.service.impl.OnGameCommonServiceImpl;
 import it.ongame.gestionale.rest.auth.SupabaseAuthClient;
+import it.ongame.gestionale.rest.utente.model.RuoloEnum;
 import it.ongame.gestionale.rest.utente.model.Utente;
 import it.ongame.gestionale.rest.utente.model.UtenteRepository;
 import it.ongame.gestionale.rest.utente.model.dto.UtenteRequestDto;
 import it.ongame.gestionale.rest.utente.model.dto.UtenteResponseDto;
 import it.ongame.gestionale.rest.utente.model.dto.UtenteResponseListDto;
 import it.ongame.gestionale.rest.utente.service.UtenteService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -50,6 +53,21 @@ public class UtenteServiceImpl extends OnGameCommonServiceImpl<Utente, UtenteRep
                 .cognome(entity.getCognome())
                 .dataNascita(entity.getDataNascita())
                 .telefono(entity.getTelefono())
+                .build();
+    }
+
+    @Override
+    public UtenteResponseListDto findOnlyClients(Integer page, Integer elements, String sedeId) {
+        return this.findAll(PageRequest.of(page,elements));
+    }
+
+    @Override
+    public UtenteResponseDto mapListDtoItem(Utente utente) {
+        return UtenteResponseDto
+                .builder()
+                .id(utente.getId().toString())
+                .nome(utente.getNome())
+                .cognome(utente.getCognome())
                 .build();
     }
 }

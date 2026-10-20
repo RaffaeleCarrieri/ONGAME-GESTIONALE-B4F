@@ -1,104 +1,154 @@
 package it.ongame.gestionale.config;
 
-import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.media.Content;
-import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
-import it.ongame.gestionale.common.controller.OnGameCrudApiCommonController;
-import org.springdoc.core.customizers.OpenApiCustomizer;
+import it.ongame.gestionale.common.controller.impl.OnGameCrudApiCommonControllerImpl;
+import org.springdoc.core.customizers.GlobalOpenApiCustomizer;
 import org.springdoc.core.customizers.OperationCustomizer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ResolvableType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
-@OpenAPIDefinition(info = @Info(title = "Ongame Gestionale API", version = "v1"))
-@SecurityScheme(name = "bearerAuth", type = SecuritySchemeType.HTTP,
-        scheme = "bearer", bearerFormat = "JWT")
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Ongame Gestionale API",
+                version = "v1"
+        )
+)
+@SecurityScheme(
+        name = "bearerAuth",
+        type = SecuritySchemeType.HTTP,
+        scheme = "bearer",
+        bearerFormat = "JWT"
+)
 public class OpenApiConfig {
 
-    private final Set<Class<?>> dtoUsati = ConcurrentHashMap.newKeySet();
+    private final String regxp = "$entity";
 
+    /*
+     * Personalizza i tag Swagger usando il nome del controller.
+     */
     @Bean
     public OperationCustomizer controllerTagCustomizer() {
         return (operation, handlerMethod) -> {
-            String tagName = getTagName(handlerMethod);
+            String tagName = getTagName(
+                    handlerMethod.getBeanType().getSimpleName()
+            );
 
-            // Sostituisce i tag esistenti invece di aggiungerne uno nuovo
             operation.setTags(List.of(tagName));
+            operation.setOperationId(operation.getOperationId().replace(regxp, tagName));
+            if(operation.getSummary()!=null) {
+                operation.setSummary(operation.getSummary().replace(regxp, tagName));
+            }
 
+            if(operation.getDescription()!=null) {
+                operation.setDescription(operation.getDescription().replace(regxp, tagName));
+            }
             return operation;
         };
     }
 
-    /*@Bean
-    OperationCustomizer schemaCrudGenerico() {
-        return (operation, handlerMethod) -> {
-            Class<?> controller = handlerMethod.getBeanType();
-            if (!OnGameCrudApiCommonController.class.isAssignableFrom(controller)
-                    || operation.getResponses() == null) {
-                return operation;
-            }
-
-            // Tipo di ritorno con i generics risolti sulla classe concreta: ResponseEntity<RESLIST> -> ResponseEntity<UtenteResponseListDto>
-            Class<?> dto = ResolvableType
-                    .forMethodReturnType(handlerMethod.getMethod(), controller)
-                    .as(ResponseEntity.class)
-                    .getGeneric(0)
-                    .resolve();
-            if (dto == null || dto == Object.class) {
-                return operation;   // es. void (delete)
-            }
-
-            operation.getResponses().forEach((codice, risposta) -> {
-                if (codice.startsWith("2") && !codice.equals("204")) {
-                    impostaSchema(risposta, dto);
-                }
-            });
-            dtoUsati.add(dto);
-            return operation;
-        };
-    }
-
-    *//** Registra in components/schemas i DTO usati, compresi quelli annidati, così i $ref si risolvono. *//*
+    /*
+     * Risolve automaticamente RESLIST dalla gerarchia generica
+     * dei controller CRUD e aggiorna lo schema della risposta 200.
+     */
     @Bean
-    OpenApiCustomizer registraSchemiCrud() {
+    public GlobalOpenApiCustomizer genericResponseSchemaCustomizer(
+            @Qualifier("requestMappingHandlerMapping")
+            RequestMappingHandlerMapping handlerMapping) {
+
         return openApi -> {
-            if (openApi.getComponents() == null) {
-                openApi.setComponents(new Components());
+            if (openApi.getPaths() == null) {
+                return;
             }
-            Components components = openApi.getComponents();
-            for (Class<?> dto : dtoUsati) {
-                ModelConverters.getInstance().readAll(dto).forEach((nome, schema) -> {
-                    if (components.getSchemas() == null || !components.getSchemas().containsKey(nome)) {
-                        components.addSchemas(nome, schema);
+
+            handlerMapping.getHandlerMethods().forEach((mapping, handlerMethod) -> {
+                Class<?> controllerClass = handlerMethod.getBeanType();
+
+                ResolvableType controllerType = ResolvableType
+                        .forClass(controllerClass)
+                        .as(OnGameCrudApiCommonControllerImpl.class);
+
+                if (controllerType == ResolvableType.NONE) {
+                    return;
+                }
+
+                Class<?> responseListClass =
+                        controllerType.getGeneric(2).resolve();
+
+                if (responseListClass == null) {
+                    return;
+                }
+
+                mapping.getPatternValues().forEach(path -> {
+                    PathItem pathItem = openApi.getPaths().get(path);
+
+                    if (pathItem == null) {
+                        return;
+                    }
+
+                    for (RequestMethod method :
+                            mapping.getMethodsCondition().getMethods()) {
+
+                        Operation operation = getOperation(pathItem, method);
+                        if (operation == null || operation.getResponses() == null) {
+                            continue;
+                        }
+
+                        ApiResponse response =
+                                operation.getResponses().get("200");
+
+                        if (response == null || response.getContent() == null) {
+                            continue;
+                        }
+
+                        Schema<?> schema = new Schema<>()
+                                .$ref("#/components/schemas/"
+                                        + responseListClass.getSimpleName());
+
+                        response.getContent().values().forEach(mediaType ->
+                                mediaType.setSchema(schema)
+                        );
                     }
                 });
-            }
+            });
         };
     }
 
-    private void impostaSchema(ApiResponse risposta, Class<?> dto) {
-        Schema<?> ref = new Schema<>().$ref("#/components/schemas/" + dto.getSimpleName());
-        risposta.setContent(new Content().addMediaType("application/json", new MediaType().schema(ref)));
-    }
-*/
-    private String getTagName(HandlerMethod handlerMethod) {
-        String className = handlerMethod.getBeanType().getSimpleName();
+    /*
+     * Recupera l'operazione OpenAPI corrispondente al metodo HTTP.
+     */
+    private Operation getOperation(
+            PathItem pathItem,
+            RequestMethod method) {
 
+        return switch (method) {
+            case GET -> pathItem.getGet();
+            case POST -> pathItem.getPost();
+            case PUT -> pathItem.getPut();
+            case PATCH -> pathItem.getPatch();
+            case DELETE -> pathItem.getDelete();
+            default -> null;
+        };
+    }
+
+    /*
+     * Rimuove il suffisso Controller dal nome della classe
+     * per ottenere il tag Swagger.
+     */
+    private String getTagName(String className) {
         return className.replaceFirst("Controller$", "");
     }
-
 }

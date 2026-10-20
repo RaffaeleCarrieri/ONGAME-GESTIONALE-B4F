@@ -1,21 +1,12 @@
 package it.ongame.gestionale.rest.utente;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.ongame.gestionale.common.controller.impl.OnGameCrudApiCommonControllerImpl;
 import it.ongame.gestionale.rest.utente.model.dto.UtenteRequestDto;
 import it.ongame.gestionale.rest.utente.model.dto.UtenteResponseDto;
 import it.ongame.gestionale.rest.utente.model.dto.UtenteResponseListDto;
 import it.ongame.gestionale.rest.utente.service.UtenteService;
-import jakarta.websocket.server.PathParam;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/v1/utenti")

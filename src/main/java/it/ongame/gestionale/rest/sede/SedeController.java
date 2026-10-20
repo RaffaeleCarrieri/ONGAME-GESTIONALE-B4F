@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 /** CRUD di riferimento: replica lo stesso schema per utenti, clienti, offerte... */
 @RestController
-@RequestMapping("/api/sedi")
-@SecurityRequirement(name = "bearerAuth")
+@RequestMapping("/api/v1/sedi")
+//@SecurityRequirement(name = "bearerAuth")
 public class SedeController extends OnGameCrudApiCommonControllerImpl<
         SedeRequestDto,SedeResponseDto,SedeResponseListDto,SedeService
         > {
@@ -22,6 +22,7 @@ public class SedeController extends OnGameCrudApiCommonControllerImpl<
     public SedeController(SedeService service) {
         super(service);
     }
+
 /*
     private final SedeService service;
 

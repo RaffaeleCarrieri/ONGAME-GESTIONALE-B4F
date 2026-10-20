@@ -18,7 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-
+/*
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -29,9 +29,9 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
         return http.build();
-    }
+    }*/
 
-    /*@Bean
+    @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
@@ -39,12 +39,13 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/actuator/health", "/api/auth/login", "/api/auth/registrazione").permitAll()
+                .requestMatchers("/api/v1/**").permitAll()
                 .anyRequest().authenticated())
             .oauth2ResourceServer(o -> o.jwt(j -> j.jwtAuthenticationConverter(jwtAuthConverter())));
         return http.build();
-    }*/
+    }
 
-/*
+
 
     private JwtAuthenticationConverter jwtAuthConverter() {
         JwtAuthenticationConverter c = new JwtAuthenticationConverter();
@@ -56,5 +57,5 @@ public class SecurityConfig {
         });
         return c;
     }
-*/
+
 }

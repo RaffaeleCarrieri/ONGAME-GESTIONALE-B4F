@@ -20,15 +20,6 @@ public interface OnGameCrudApiCommonController<
         RES extends OnGameCommonResponseDto,
         RESLIST extends OnGameCommonListResponseDto<RES>> {
 
-    @Operation(summary = "Elenco paginato degli utenti",
-            description = "Restituisce gli utenti non eliminati. Quelli con soft delete non sono inclusi.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Elenco restituito correttamente",
-                    content = @Content(schema = @Schema(implementation = UtenteResponseListDto.class))),
-            @ApiResponse(responseCode = "400", description = "Parametri di paginazione non validi", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Token mancante o non valido", content = @Content),
-            @ApiResponse(responseCode = "403", description = "Ruolo non autorizzato", content = @Content)
-    })
      ResponseEntity<RESLIST> findAll(
             @Parameter(description = "Numero di pagina, parte da 0", example = "0",
                     schema = @Schema(minimum = "0", defaultValue = "0"))
@@ -39,31 +30,11 @@ public interface OnGameCrudApiCommonController<
             @RequestParam(name = "elements", defaultValue = "20") Integer elements);
 
 
-    @Operation(summary = "Trova un utente per id",
-            description = "Restituisce l'utente con l'id indicato (UUID dell'account Supabase).")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Utente trovato",
-                    content = @Content(schema = @Schema(implementation = UtenteResponseDto.class))),
-            @ApiResponse(responseCode = "400", description = "Id non valido", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Token mancante o non valido", content = @Content),
-            @ApiResponse(responseCode = "403", description = "Ruolo non autorizzato", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Utente non trovato", content = @Content)
-    })
     ResponseEntity<RES> findById(
             @Parameter(description = "id utente")
             @PathVariable(name = "id") String id
     );
 
-    @Operation(summary = "Crea un utente",
-            description = "Crea il login su Supabase Auth e il profilo nella tabella utenti.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Utente creato",
-                    content = @Content(schema = @Schema(implementation = UtenteResponseDto.class))),
-            @ApiResponse(responseCode = "400", description = "Body non valido", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Token mancante o non valido", content = @Content),
-            @ApiResponse(responseCode = "403", description = "Ruolo non autorizzato", content = @Content),
-            @ApiResponse(responseCode = "409", description = "Email già registrata", content = @Content)
-    })
     ResponseEntity<RES> create(REQ req);
 
     void delete(String id);

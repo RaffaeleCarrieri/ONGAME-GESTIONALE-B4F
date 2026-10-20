@@ -7,11 +7,11 @@ import it.ongame.gestionale.common.model.dto.OnGameCommonResponseDto;
 import it.ongame.gestionale.common.repository.OnGameCommonRepository;
 import it.ongame.gestionale.common.service.OnGameCommonService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,7 +33,7 @@ public abstract class OnGameCommonServiceImpl<
             List<RES> list = this.repository
                     .findAll(pageRequest)
                     .stream().map(
-                            this::toDto
+                            this::mapListDtoItem
                     ).toList();
             ParameterizedType type =
                     (ParameterizedType) getClass().getGenericSuperclass();
@@ -58,6 +58,27 @@ public abstract class OnGameCommonServiceImpl<
         return toDto(newRecord);
     }
 
+    public  RES patch(String id,REQ req){
+        E recordToUpdate = this.repository.findById(UUID.fromString(id)).orElseThrow();
+        List<String> settersMethods = Arrays
+                .stream(recordToUpdate.getClass().getDeclaredMethods())
+                .map(Method::getName)
+                .filter(
+                        method->method.equalsIgnoreCase("setid") &&
+                                (method.startsWith("set")||method.startsWith("is"))
+                )
+                .toList();
+
+        settersMethods.forEach(
+                method->{
+                    //Method m =
+                }
+        );
+
+        return null;
+
+    }
+
     @Override
     public void delete(String id){
         this.repository.deleteById(UUID.fromString(id));
@@ -66,4 +87,9 @@ public abstract class OnGameCommonServiceImpl<
     public abstract E toModel(REQ res);
 
     public abstract RES toDto(E entity);
+
+    //fai l'override del metodo solo se vuoi far visualizzare alcuni campi
+    public RES mapListDtoItem(E e){
+        return toDto(e);
+    }
 }
