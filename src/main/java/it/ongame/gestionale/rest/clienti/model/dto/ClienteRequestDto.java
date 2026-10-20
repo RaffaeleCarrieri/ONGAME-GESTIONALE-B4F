@@ -19,6 +19,7 @@ import java.util.UUID;
 @Builder
 public class ClienteRequestDto extends OnGameCommonRequestDto {
     private String nome;
+    private String sedeId;
     private String cognome;
     private LocalDate dataNascita;
     private String email;
