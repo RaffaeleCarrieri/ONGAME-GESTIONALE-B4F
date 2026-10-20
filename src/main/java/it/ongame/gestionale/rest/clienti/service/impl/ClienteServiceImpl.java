@@ -7,6 +7,7 @@ import it.ongame.gestionale.rest.clienti.model.dto.ClienteRequestDto;
 import it.ongame.gestionale.rest.clienti.model.dto.ClienteResponseDto;
 import it.ongame.gestionale.rest.clienti.model.dto.ClientiResponseListDto;
 import it.ongame.gestionale.rest.clienti.service.ClienteService;
+import it.ongame.gestionale.rest.sede.SedeRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,14 +18,17 @@ import java.util.UUID;
 @Service
 public class ClienteServiceImpl extends OnGameCommonServiceImpl<Cliente, ClienteRepository, ClienteRequestDto, ClienteResponseDto, ClientiResponseListDto> implements ClienteService {
 
-    public ClienteServiceImpl(ClienteRepository repository) {
+    private final SedeRepository sedeRepository;
+    public ClienteServiceImpl(ClienteRepository repository, SedeRepository sedeRepository) {
         super(repository);
+        this.sedeRepository = sedeRepository;
     }
 
     @Override
     public Cliente toModel(ClienteRequestDto res) {
         return Cliente
                 .builder()
+                .sedeCliente(sedeRepository.findById(UUID.fromString(res.getSedeId())).orElseThrow())
                 .email(res.getEmail())
                 .nome(res.getNome())
                 .cognome(res.getCognome())

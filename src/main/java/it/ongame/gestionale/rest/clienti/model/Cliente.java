@@ -1,6 +1,7 @@
 package it.ongame.gestionale.rest.clienti.model;
 
 import it.ongame.gestionale.common.model.OnGameCommonModel;
+import it.ongame.gestionale.rest.sede.Sede;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,10 +30,7 @@ public class Cliente extends OnGameCommonModel {
     @GeneratedValue
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
-
-    @Column(name = "sede_id", nullable = false)
-    private UUID sedeId;
-
+    
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
@@ -55,4 +53,8 @@ public class Cliente extends OnGameCommonModel {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "sede_id", nullable = false)
+    private Sede sedeCliente;
 }
