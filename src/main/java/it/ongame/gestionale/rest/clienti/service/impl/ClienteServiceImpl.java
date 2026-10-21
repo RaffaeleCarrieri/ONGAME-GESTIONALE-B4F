@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Service
@@ -25,6 +24,16 @@ public class ClienteServiceImpl extends OnGameCommonServiceImpl<Cliente, Cliente
     }
 
     @Override
+    protected void updateRecordWithRequestData(Cliente recordToUpdate, ClienteRequestDto clienteRequestDto) {
+        recordToUpdate.setNome(clienteRequestDto.getNome());
+        recordToUpdate.setCognome(clienteRequestDto.getCognome());
+        recordToUpdate.setDataNascita(LocalDate.parse(clienteRequestDto.getDataNascita()));
+        recordToUpdate.setUpdatedAt(LocalDateTime.now());
+        recordToUpdate.setEmail(clienteRequestDto.getEmail());
+        recordToUpdate.setTelefonoCifrato(clienteRequestDto.getTelefono());
+    }
+
+    @Override
     public Cliente toModel(ClienteRequestDto res) {
         return Cliente
                 .builder()
@@ -33,7 +42,7 @@ public class ClienteServiceImpl extends OnGameCommonServiceImpl<Cliente, Cliente
                 .nome(res.getNome())
                 .cognome(res.getCognome())
                 .telefonoCifrato(res.getTelefono())
-                .dataNascita(res.getDataNascita())
+                .dataNascita(LocalDate.parse(res.getDataNascita()))
                 .updatedAt(LocalDateTime.now())
                 .build();
     }

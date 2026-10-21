@@ -13,6 +13,7 @@ import it.ongame.gestionale.common.model.dto.OnGameCommonResponseDto;
 import it.ongame.gestionale.common.service.OnGameCommonService;
 import it.ongame.gestionale.rest.utente.model.dto.UtenteResponseDto;
 import it.ongame.gestionale.rest.utente.model.dto.UtenteResponseListDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -83,7 +84,7 @@ public abstract class OnGameCrudApiCommonControllerImpl<
             @ApiResponse(responseCode = "403", description = "Ruolo non autorizzato", content = @Content),
             @ApiResponse(responseCode = "409", description = "Email già registrata", content = @Content)
     })
-    public ResponseEntity<RES> create(@RequestBody REQ req) {
+    public ResponseEntity<RES> create(@RequestBody @Valid REQ req) {
         return ResponseEntity.ok().body(this.service.create(req));
     }
 

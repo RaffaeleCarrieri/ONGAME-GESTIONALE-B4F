@@ -58,7 +58,7 @@ public abstract class OnGameCommonServiceImpl<
         return toDto(newRecord);
     }
 
-    public  RES patch(String id,REQ req){
+    /*public  RES patch(String id,REQ req){
         E recordToUpdate = this.repository.findById(UUID.fromString(id)).orElseThrow();
         List<String> settersMethods = Arrays
                 .stream(recordToUpdate.getClass().getDeclaredMethods())
@@ -77,7 +77,16 @@ public abstract class OnGameCommonServiceImpl<
 
         return null;
 
+    }*/
+
+    @Override
+    public RES update(String id,REQ req) throws Exception{
+        E recordToUpdate = this.repository.findById(UUID.fromString(id)).orElseThrow();
+        updateRecordWithRequestData(recordToUpdate,req);
+        return toDto(this.repository.save(recordToUpdate));
     }
+
+    protected abstract void updateRecordWithRequestData(E recordToUpdate, REQ req);
 
     @Override
     public void delete(String id){

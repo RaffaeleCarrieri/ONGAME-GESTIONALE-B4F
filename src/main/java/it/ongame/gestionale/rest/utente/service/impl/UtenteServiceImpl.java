@@ -27,6 +27,11 @@ public class UtenteServiceImpl extends OnGameCommonServiceImpl<Utente, UtenteRep
     }
 
     @Override
+    protected void updateRecordWithRequestData(Utente recordToUpdate, UtenteRequestDto utenteRequestDto) {
+
+    }
+
+    @Override
     public Utente toModel(UtenteRequestDto utenteRequestDto) {
         UUID id = supabase.creaUtente(utenteRequestDto.getEmail(), utenteRequestDto.getPassword(), utenteRequestDto.getRuolo().name());
         return Utente

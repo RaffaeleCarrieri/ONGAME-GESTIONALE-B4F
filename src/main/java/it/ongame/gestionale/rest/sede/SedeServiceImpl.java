@@ -15,6 +15,11 @@ public class SedeServiceImpl extends OnGameCommonServiceImpl<
     }
 
     @Override
+    protected void updateRecordWithRequestData(Sede recordToUpdate, SedeRequestDto sedeRequestDto) {
+
+    }
+
+    @Override
     public Sede toModel(SedeRequestDto res) {
         return Sede
                 .builder()

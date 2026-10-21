@@ -11,6 +11,7 @@ public interface OnGameCommonService<REQ extends OnGameCommonRequestDto,
     RESPLIST findAll(PageRequest pageRequest);
     RES findById(String id);
     RES create(REQ req);
+    RES update(String id,REQ req) throws Exception;
     void delete(String id);
 
 }
