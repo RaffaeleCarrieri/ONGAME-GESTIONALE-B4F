@@ -89,6 +89,23 @@ public abstract class OnGameCrudApiCommonControllerImpl<
     }
 
     @Override
+    @PutMapping("/{id}")
+    @Operation(
+            operationId = "put_$entity",
+            summary = "Modifica $entity dal suo id con i campi del suo body",
+            description = "Modifica $entity dal suo id con i campi del suo body")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "$entity modificato",
+                    content = @Content(schema = @Schema(implementation = UtenteResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "Body non valido", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Token mancante o non valido", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Ruolo non autorizzato", content = @Content),
+    })
+    public ResponseEntity<RES> update(@PathVariable("id")String id,@RequestBody REQ req) throws Exception {
+        return ResponseEntity.ok().body(this.service.update(id,req));
+    }
+
+    @Override
     @DeleteMapping("/{id}")
     @Operation(
             operationId = "delete_$entity",

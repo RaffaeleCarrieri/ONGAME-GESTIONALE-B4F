@@ -1,16 +1,10 @@
 package it.ongame.gestionale.common.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.ongame.gestionale.common.model.dto.OnGameCommonListResponseDto;
 import it.ongame.gestionale.common.model.dto.OnGameCommonRequestDto;
 import it.ongame.gestionale.common.model.dto.OnGameCommonResponseDto;
-import it.ongame.gestionale.rest.utente.model.dto.UtenteResponseDto;
-import it.ongame.gestionale.rest.utente.model.dto.UtenteResponseListDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,6 +30,8 @@ public interface OnGameCrudApiCommonController<
     );
 
     ResponseEntity<RES> create(REQ req);
+
+    ResponseEntity<RES> update(String id,REQ req) throws Exception;
 
     void delete(String id);
 }
