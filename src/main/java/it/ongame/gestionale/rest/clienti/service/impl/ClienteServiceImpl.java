@@ -51,6 +51,7 @@ public class ClienteServiceImpl extends OnGameCommonServiceImpl<Cliente, Cliente
     public ClienteResponseDto toDto(Cliente entity) {
         return ClienteResponseDto
                 .builder()
+                .id(entity.getId().toString())
                 .nome(entity.getNome())
                 .cognome(entity.getCognome())
                 .email(entity.getEmail())
