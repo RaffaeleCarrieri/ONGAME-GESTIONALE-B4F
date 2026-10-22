@@ -17,6 +17,7 @@ public class ClienteResponseDto extends OnGameCommonResponseDto {
     private String nome;
     private String cognome;
     private LocalDate dataNascita;
+    private String sedeId;
     private String email;
     private String telefono;
 }
