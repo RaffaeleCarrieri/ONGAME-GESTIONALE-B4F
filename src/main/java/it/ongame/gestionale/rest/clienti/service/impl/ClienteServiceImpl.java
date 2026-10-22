@@ -52,7 +52,7 @@ public class ClienteServiceImpl extends OnGameCommonServiceImpl<Cliente, Cliente
         return ClienteResponseDto
                 .builder()
                 .id(entity.getId().toString())
-                .sedeId(entity.getSedeCliente().getId().toString())
+                .nomeSede(entity.getSedeCliente().getNome())
                 .nome(entity.getNome())
                 .cognome(entity.getCognome())
                 .email(entity.getEmail())
